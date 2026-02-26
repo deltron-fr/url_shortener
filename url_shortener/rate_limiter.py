@@ -4,12 +4,12 @@ class UserTypeRateThrottle(UserRateThrottle):
     def allow_request(self, request, view):
         user = request.user
 
-        if user.plan == "FREE":
-            self.rate = '3/minute'
-        elif user.plan == "PRO":
-            return '5/minute'
-        else:
-            return None
+        if user.is_authenticated:
+            if user.plan == "FREE":
+                self.rate = '10/minute'
+            elif user.plan == "PRO":
+                self.rate = '20/minute'
+            
 
         self.num_requests, self.duration = self.parse_rate(self.rate)
         return super().allow_request(request, view)
