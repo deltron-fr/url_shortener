@@ -16,11 +16,8 @@ class ShortURLSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['id', 'username', 'email', 'password']
-        # extra_kwargs = {'password': {'write_only': True}}
+        fields = ['id', 'username', 'email', 'password', 'plan']
+        extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
-        user = super().create(validated_data)
-        user.set_password(validated_data['password'])
-        user.save()
-        return user
+        return CustomUser.objects.create_user(**validated_data)

@@ -5,24 +5,24 @@ import string
 import random
 
 class CustomUser(AbstractUser):
-    password = models.CharField(max_length=128)
-    plan = models.CharField(max_length=20, default='free')
+    class PlanChoices(models.TextChoices):
+        FREE = 'FREE'
+        PRO = 'PRO'
 
-    groups = models.ManyToManyField(
-        Group,
-        related_query_name='customuser',
-        blank=True,
-        help_text='The groups this user belongs to. A user will get all permissions granted to each of their groups.',
-        verbose_name='groups',
+    email = models.EmailField(unique=True)
+    plan = models.CharField(
+        max_length=20,
+        choices=PlanChoices.choices,
+        default=PlanChoices.FREE
     )
-    user_permissions = models.ManyToManyField(
-        Permission,
-        related_name='customuser_permissions_set', 
-        related_query_name='customuser_permissions',
-        blank=True,
-        help_text='Specific permissions for this user.',
-        verbose_name='user permissions',
-    )
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username']
+
+    def __str__(self):
+        return f"{self.email}"
+
+   
 
 class ShortURL(models.Model):
     original_url = models.URLField(max_length=500)
