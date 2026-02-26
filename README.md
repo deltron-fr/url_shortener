@@ -8,14 +8,15 @@ A simple URL shortener API with user registration, login, and password reset flo
 
 ```bash
 uv sync
+cp .env.example .env
 source .venv/bin/activate
 ```
 
 2. Run migrations and start the server:
 
 ```bash
-python manage.py migrate
-python manage.py runserver
+uv run python manage.py migrate
+uv run python manage.py runserver
 ```
 
 The API will be available at `http://127.0.0.1:8000/`.

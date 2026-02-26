@@ -1,9 +1,10 @@
+from rest_framework.authtoken.models import Token
 from rest_framework import generics, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from django.shortcuts import get_object_or_404, redirect
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, logout
 from django.core.mail import send_mail
 from .models import ShortURL, CustomUser, PasswordResetToken
 from .serializer import ShortURLSerializer, UserSerializer, ForgotPasswordSerializer, ResetPasswordSerializer
@@ -28,6 +29,9 @@ class URLDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 
 
 class LoginView(APIView):
+
+    permission_classes = [AllowAny]
+
     def post(self, request):
         email = request.data.get('email')
         password = request.data.get('password')
@@ -35,8 +39,8 @@ class LoginView(APIView):
         user = authenticate(request, username=email, password=password)
 
         if user is not None:
-            login(request, user)
-            return Response({"message": "login successful"}, status=status.HTTP_200_OK)
+            token, _ = Token.objects.get_or_create(user=user)
+            return Response({"message": "login successful", "token": token.key}, status=status.HTTP_200_OK)
     
         return Response({"error": "invalid authentication credentials"}, status=status.HTTP_401_UNAUTHORIZED)
 
