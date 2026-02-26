@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, Group, Permission
 from django.conf import settings
+from django.utils import timezone
+from datetime import timedelta
 import string
 import random
 
@@ -45,3 +47,14 @@ class ShortURL(models.Model):
 
     def __str__(self):
         return f"{self.short_code} -> {self.original_url}"
+
+class PasswordResetToken(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    token = models.CharField(max_length=64, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_used = models.BooleanField(default=False)
+
+    def is_valid(self):
+        expiry_time = self.created_at + timedelta(minutes=10)
+        return timezone.now() < expiry_time and not self.is_used
+

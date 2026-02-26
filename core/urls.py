@@ -23,9 +23,11 @@ urlpatterns = [
     path('urls/shorten/', views.ShortURLCreateAPIView.as_view(), name='shorten-url'),
     path('register/', views.CreateUserAPIView.as_view(), name='register-user'),
     path('login/', views.LoginView.as_view(), name='login-user'),
-    path('api-auth', include('rest_framework.urls')),
+    path('api-auth/', include('rest_framework.urls')),
     path('logout/', views.LogoutView.as_view(), name='logout-user'),
     path('health/', views.HealthView.as_view(), name='application-health'),
+    path('forgot-password/', views.ForgotPasswordView.as_view(), name='forgot-password'),
+    path('reset-password/', views.ResetPasswordView.as_view(), name='reset-password'),
     path('urls/<int:pk>', views.URLDetailAPIView.as_view(), name='delete-user'),
-    path('<str:short_code>/', views.redirect_to_original, name='redirect-original')
+    path('<str:short_code>/', views.RedirectAPIView.as_view(), name='redirect-original')
 ]
